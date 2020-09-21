@@ -15,7 +15,7 @@ fb.auth.onAuthStateChanged(user => {
     if (user) {
         store.commit('setCurrentUser', user)
         store.dispatch('fetchUserProfile')
-        //store.dispatch('setUserState')
+        store.commit('setUserLinks', null)
         firebase
             .firestore()
             .collection("users/" + user.uid + "/links")
@@ -24,12 +24,11 @@ fb.auth.onAuthStateChanged(user => {
                 if (!querySnapshot.empty) {
                     querySnapshot.forEach(function (doc) {
                         // Check if any of the links contains any from Quick Add
-                        if (doc.data().linkUrl.includes("instagram") ||
-                        doc.data().linkUrl.includes("facebook")  ||
-                        doc.data().linkUrl.includes("twitter")  ||
-                        doc.data().linkUrl.includes("tik")  
+                        if (doc.data().linkUrl.includes("instagram.com") ||
+                        doc.data().linkUrl.includes("facebook.com")  ||
+                        doc.data().linkUrl.includes("twitter.com")  ||
+                        doc.data().linkUrl.includes("tiktok.com")  
                         ) {
-                          console.log("contain instagrasm");
                           store.commit("setEditYourProfilesBool", true);
 
                         }
@@ -104,7 +103,6 @@ export const store = new Vuex.Store({
             //Need this in order to work with FB inside the call
             let self = this
             let tempUserDetails = "";
-            state.searchedUser.userExist = false;
 
             fb.usersCollection
                 .where("username_lowercase", "==", state.searchedUser.username.toLowerCase())
@@ -149,7 +147,9 @@ export const store = new Vuex.Store({
                             state.searchedUser.email = tempUserDetails.email;
                             self.commit("setSearchedUserEmail", state.searchedUser.email);
                             self.commit("setSearchedUserUUID", doc.id);
-
+                            self.commit("setLoadingLink", false)
+                            //Empty userLinks array so we don't get double data
+                            store.commit('setUserLinks', null)
                             firebase
                                 .firestore()
                                 .collection("users/" + doc.id + "/links")
@@ -235,7 +235,6 @@ export const store = new Vuex.Store({
                 });
         },
         deleteSocialMediaProfile({ commit, state }, docId) {
-            // console.log("Post successfully deleted");
             //Start spinner
             this.commit("setLoadingLink", true)
 
@@ -314,18 +313,13 @@ export const store = new Vuex.Store({
             } else {
                 state.userLinks = []
             }
-        }, setEditYourProfilesBool(state, val) {
+        }, 
+        setEditYourProfilesBool(state, val) {
             if (val) {
                 state.editoYourProfilesBool = val
             } else {
                 state.editoYourProfilesBool = false
             }
-            console.log("Inside set")
-            console.log(state.editoYourProfilesBool)
         },
-
-
-
-
     }
 })
