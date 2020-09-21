@@ -68,9 +68,9 @@ Contributions are always welcome, feel free to submit a PR, I'll review it and i
 - [ ] Add some tests
 - [ ] Add QR Code feature
 - [ ] Allow user to choose a background color
-- [ ] For populare social media add a 'Quick add section' where user just enter the username instead of the whole link
+- [x] For populare social media add a 'Quick add section' where user just enter the username instead of the whole link
 - [x] When user upload profile image compress it, so it doesn't take much space in the server
-- [ ] Allow user to change their username after they sign-up
+- [x] Allow user to change their username after they sign-up
 - [ ] Add caching feature, instead pulling all the data every time.
 - [ ] Share some Love :) 
 
