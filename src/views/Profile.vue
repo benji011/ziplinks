@@ -2,7 +2,7 @@
   <div class="profile" :style="{backgroundColor:searchedUser.background_colour , height:'100%' }">
     <v-flex>
       <center>
-        <br>
+        <br />
         <div v-if="this.searchedUser.userProfileImage!= null && this.searchedUser.userExist">
           <v-avatar :size="200" color="grey lighten-4">
             <!-- TODO find a better way to update image from browser cache
@@ -46,7 +46,7 @@
         <br />
         <v-col cols="12" sm="6" v-for="userLinks in this.userLinks" :key="userLinks.message">
           <v-btn
-            color="primary"
+            :color="searchedUser.buttons_colour"
             class="ml-1"
             block
             x-large
@@ -91,11 +91,12 @@ import { mapState, mapGetters } from "vuex";
 import { store } from "../store";
 const fb = require("../firebaseConfig");
 import router from "../router/";
+import firebase from "firebase";
 
 export default {
   data: () => ({
     mounted: false,
-    tempColour: "#FFFFFF"
+    tempColour: "#FFFFFF",
   }),
   computed: {
     ...mapState([
@@ -108,36 +109,30 @@ export default {
   },
   methods: {},
   beforeMount() {
-    this.$store.commit("setShowFooter", false)
-    this.$store.commit("setShowNavBar", false)
+    this.$store.commit("setShowFooter", false);
+    this.$store.commit("setShowNavBar", false);
     this.$store.commit("setSearchedUserUsername", this.$route.params.id);
     this.$store.dispatch("fetchUserFromLinkOrSearchBar");
-    console.log("Created colour: "+ this.searchedUser.background_colour)
+    this.$store.dispatch("incrementViews");
 
     if (this.searchedUser.background_colour === null) {
       this.tempColour == "#000000";
-    }else{
-      if(this.searchedUser.background_colour.indexOf("#")  > -1){
-        console.log("Does include ash "+ this.searchedUser.background_colour)
-        this.tempColour = this.searchedUser.background_colour
-      }else{
-         console.log("Does not  include ash")
-          this.tempColour = '#'+ this.searchedUser.background_colour
+    } else {
+      if (this.searchedUser.background_colour.indexOf("#") > -1) {
+        this.tempColour = this.searchedUser.background_colour;
+      } else {
+        this.tempColour = "#" + this.searchedUser.background_colour;
       }
-      
     }
-
-    //console.log(this.userProfile.background_colour);
-    //console.log(this.searchedUser.userProfileImage);
-
-    // console.log(this.linksLoaded)
+    
   },
   mounted() {
     this.mounted = true;
   },
   created() {
-
-
+    firebase.analytics().logEvent("profile",{
+      name: this.searchedUser.username
+    } );
   },
 
   watch: {
@@ -159,6 +154,5 @@ export default {
 .icon_margin {
   margin-left: 1000px;
 }
-
 </style>
 

@@ -1,11 +1,12 @@
 <template>
   <div class="home">
+    <br>
     <div class="text-center">
       <h1 class="display-1">@{{userProfile.username}}</h1>
 
       <center>
         <EditUsername />
-        <Colour />
+       
       </center>
       
       <br />
@@ -317,6 +318,7 @@ export default {
 
     message: "Copy These Text",
     showToolTip: false,
+    tab: null
   }),
   beforeMount(){
     this.$store.commit("setShowFooter", true)

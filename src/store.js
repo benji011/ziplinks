@@ -65,13 +65,14 @@ export const store = new Vuex.Store({
             username: "",
             userID: "",
             userProfileImage: "",
-            background_colour: "#FFFFFF"
+            background_colour: "#FFFFFF",
+            buttons_colour: "#FFFFFF"
         },
         userLinks: [],
         linksLoaded: false,
         imageLoaded: false,
         editoYourProfilesBool: false,
-        showFooter : true,
+        showFooter: true,
         showNavBar: true,
 
     },
@@ -122,8 +123,8 @@ export const store = new Vuex.Store({
                             // Get user in a temp variable
                             tempUserDetails = doc.data();
                             state.searchedUser.userID = doc.id;
-                            state.searchedUser.background_colour =  tempUserDetails.background_colour
-                            console.log("dddddd"+ tempUserDetails.background_colour)
+                            state.searchedUser.background_colour = tempUserDetails.background_colour
+                            state.searchedUser.buttons_colour = tempUserDetails.buttons_colour
                             self.commit("setSearchedUserBackgroundColour", tempUserDetails.background_colour);
 
                             fb.storage
@@ -152,7 +153,7 @@ export const store = new Vuex.Store({
                                 });
 
                             state.searchedUser.email = tempUserDetails.email;
-                            
+
                             self.commit("setSearchedUserEmail", state.searchedUser.email);
                             self.commit("setSearchedUserUUID", doc.id);
                             //Empty userLinks array so we don't get double data
@@ -297,7 +298,7 @@ export const store = new Vuex.Store({
                     console.log("Error getting documents: ", error);
                 });
         },
-        addUpdateColour({ commit, state }, colour){
+        addUpdateBackgroundColour({ commit, state }, colour) {
             //Start the loading
             commit("setLoadingLink", true)
             fb.usersCollection
@@ -315,7 +316,41 @@ export const store = new Vuex.Store({
                     commit("setLoadingLink", false)
                 });
 
+        },
+        addUpdateButtonsColour({ commit, state }, colour) {
+            //Start the loading
+            commit("setLoadingLink", true)
+            fb.usersCollection
+                .doc(state.currentUser.uid)
+                .set({
+                    buttons_colour: colour,
+                }, { merge: true })
+                .then(() => {
+                    //Stop loading
+                    commit("setLoadingLink", false)
+                })
+                .catch((err) => {
+                    console.log(err);
+                    //Stop loading
+                    commit("setLoadingLink", false)
+                });
+
+        },
+        incrementViews({ commit, state }){
+            fb.usersCollection
+            .doc(state.currentUser.uid)
+            .set({
+                views:firebase.firestore.FieldValue.increment(1)
+            }, { merge: true })
+            .then(() => {
+                //add one to views
+                // console.log("Added one to views")
+            })
+            .catch((err) => {
+                console.log(err);
+            });
         }
+
     },
     mutations: {
         setCurrentUser(state, val) {

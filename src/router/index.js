@@ -28,7 +28,7 @@ const router = new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue'),
+      component: () => import(/* webpackChunkName: "about" */ '../components/Tabs/tabs.vue'),
       meta: {
         requiresAuth: true
       }
